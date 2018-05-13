@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 ##################
 IS_FOUND = 0
 
-MORPH = 7
+MORPH = 51
 CANNY = 250
 ##################
 # 420x600 oranı 105mmx150mm gerçek boyuttaki kağıt için
@@ -22,7 +22,7 @@ _margin = 0.0
 ##################
 
 # Define imagem do arquivo data.json
-Imagem="RR_JPG"
+Imagem="RR2"
 # importa arquivo data.json
 data = json.load(open('data.json'))
 
@@ -45,7 +45,6 @@ im2,contours,h = cv2.findContours( closed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_S
 
 #Faz loop na imagem e pinta de branco os contornos
 for cont in contours:
-
     if cv2.contourArea( cont ) > 5000 :
 
         arc_len = cv2.arcLength( cont, True )
@@ -55,13 +54,11 @@ for cont in contours:
             pts_src = np.array( approx, np.float32 )
             h, status = cv2.findHomography( pts_src, pts_dst )
             out = cv2.warpPerspective( rgb, h, ( int( _width + _margin * 2 ), int( _height + _margin * 2 ) ) )
-
             cv2.drawContours( rgb, [approx], -1, ( 255, 0, 0 ), 2 )
 
         else : pass
-
-#Faz plot dos resultados
-
+"""
+#Faz plot dos resultados de edge
 plt.subplot(2,2,1),plt.imshow(rgb,cmap = 'gray')
 plt.title('rgb'), plt.xticks([]), plt.yticks([])
 cv2.imwrite( 'rgb.jpg', rgb )
@@ -78,17 +75,66 @@ plt.subplot(2,2,4),plt.imshow(closed,cmap = 'gray')
 plt.title('closed'), plt.xticks([]), plt.yticks([])
 cv2.imwrite( 'closed.jpg', closed )
 
-plt.show()
+#plt.show()
+"""
 
 if IS_FOUND :
     cv2.namedWindow( 'out')
     cv2.imshow( 'out', out )
 
-
 #Faz print no console
 print("Pictures saved")
-print('End')
 
+print('rgb Dimensions:\t' ,rgb.shape)
+print('Edges Dimensions:\t' ,edges.shape)
+
+height, width,layers = rgb.shape
+
+
+#Esse bloco vai varrer para pegar o retangulo util do contorno
+#edges[503][221]
+#edges[row][colum]
+encontrou = 0
+for x in range(0, height):
+    if (encontrou==1):
+        break
+    for y in range(0, width):
+        #print("Superior esquerdo:\t",x,':',y)
+        if(edges[x][y]==255):
+            SE = (x,y)
+            print("Superior esquerdo:\t",SE)
+            encontrou =1
+            break
+
+encontrou = 0
+for x in range(height-1,0,-1):
+    if (encontrou==1):
+        break
+    for y in range(width-1,0,-1):
+        #print("Inferior esquerdo:\t",x,':',y)
+        if(edges[x][y]==255):
+            ID = (x,y)
+            print("Inferior Direito:\t",ID)
+            encontrou =1
+            break
+
+#Calcula Altura e Largura  do crop para processar
+h = ID[0]-SE[0]
+w = ID[1]-SE[1]
+print('Altura:\t',h)
+print('Largura:\t',w)
+#crop_img = img[y:y+h, x:x+w]
+crop_img = rgb[SE[0]:ID[0], SE[1]:ID[1]]
+
+plt.subplot(1,2,1),plt.imshow(rgb,cmap = 'gray')
+plt.title('Original'), plt.xticks([]), plt.yticks([])
+plt.subplot(1,2,2),plt.imshow(crop_img,cmap = 'gray')
+plt.title('crop_img'), plt.xticks([]), plt.yticks([])
+cv2.imwrite( 'crop_img.jpg', crop_img )
+
+plt.show()
+
+print('End')
 #Espera fechar janelas para encerrar o processo, não pode ter isso no código final
 #cv2.waitKey(0)
 #cv2.destroyAllWindows()
