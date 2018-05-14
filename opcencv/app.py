@@ -22,7 +22,9 @@ _margin = 0.0
 ##################
 
 # Define imagem do arquivo data.json
-Imagem="RR2"
+#Imagem ="RR2"
+Imagem = "RR_JPG"
+
 # importa arquivo data.json
 data = json.load(open('data.json'))
 
@@ -126,11 +128,53 @@ print('Largura:\t',w)
 #crop_img = img[y:y+h, x:x+w]
 crop_img = rgb[SE[0]:ID[0], SE[1]:ID[1]]
 
-plt.subplot(1,2,1),plt.imshow(rgb,cmap = 'gray')
+plt.subplot(12,2,1),plt.imshow(rgb,cmap = 'gray')
 plt.title('Original'), plt.xticks([]), plt.yticks([])
-plt.subplot(1,2,2),plt.imshow(crop_img,cmap = 'gray')
-plt.title('crop_img'), plt.xticks([]), plt.yticks([])
-cv2.imwrite( 'crop_img.jpg', crop_img )
+plt.subplot(12,2,2),plt.imshow(crop_img,cmap = 'gray')
+plt.title('recortada'), plt.xticks([]), plt.yticks([])
+cv2.imwrite( '/app_saves/recortada.jpg', crop_img )
+
+
+
+#Definindo classes de cores dos resistores
+class Cor_Resistor(object):
+    # The class "constructor" - It's actually an initializer
+    def __init__(self, valor, nome, lower, upper):
+        self.valor = valor
+        self.nome = nome
+        self.lower = np.array(lower)
+        self.upper = np.array(upper)
+
+#Definindo ranges de cores dos resistores
+l=[]
+l.append(Cor_Resistor(0,"Preto",[0, 0, 0],[180, 250, 50]))
+l.append(Cor_Resistor(1,"Marrom",[0, 90, 10],[15, 250, 100]))
+l.append(Cor_Resistor(3,"Laranja",[4, 100, 100],[9, 250, 150]))
+l.append(Cor_Resistor(4,"Amarelo",[20, 130, 100],[30, 250, 160]))
+l.append(Cor_Resistor(5,"Verde",[45, 50, 60],[72, 250, 150]))
+l.append(Cor_Resistor(6,"Azul",[80, 50, 50],[106, 250, 150]))
+l.append(Cor_Resistor(7,"Roxo",[130, 40, 50],[155, 250, 150]))
+l.append(Cor_Resistor(8,"Cinza",[0,0, 50],[180, 50, 80]))
+l.append(Cor_Resistor(9,"Branco",[0, 0, 90],[180, 15, 140]))
+l.append(Cor_Resistor(2,"Vermelho1",[0, 65, 100],[2, 250, 150]))
+l.append(Cor_Resistor(2,"Vermelho2",[171, 65, 50],[180, 250, 150]))
+
+frame = crop_img
+# Convert BGR to HSV
+hsv = cv2.cvtColor(frame, cv2.COLOR_RGB2HSV)
+contador = 3
+for color in l:
+    mask = cv2.inRange(hsv, color.lower, color.upper)
+    # Bitwise-AND mask and original image
+    res = cv2.bitwise_and(frame,frame, mask= mask)
+    plt.subplot(12,2,contador),plt.imshow(mask,cmap = 'gray')
+    contador = contador+1
+    plt.title(color.nome), plt.xticks([]), plt.yticks([])
+    cv2.imwrite( ('/app_saves/'+color.nome+'mask.jpg'), mask )
+    plt.subplot(12,2,contador),plt.imshow(res,cmap = 'gray')
+    contador = contador+1
+    plt.title(color.nome), plt.xticks([]), plt.yticks([])
+    cv2.imwrite( ('/app_saves/'+color.nome+'res.jpg'), res )
 
 plt.show()
 
