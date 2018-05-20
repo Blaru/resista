@@ -22,6 +22,7 @@ _margin = 5
 ##################
 imgs = []
 # Define imagem do arquivo data.json
+"""
 imgs.append("resistor")
 imgs.append("IMG1")
 imgs.append("IMG2")
@@ -31,6 +32,7 @@ imgs.append("RR_GIF")
 imgs.append("RR2")
 imgs.append("RR_JPG")
 imgs.append('R12K')
+"""
 imgs.append('R10K')
 for img in imgs:
     # importa arquivo data.json
@@ -127,16 +129,16 @@ for img in imgs:
     #Definindo ranges de cores dos resistores
     l=[]
     l.append(Cor_Resistor(0,"Preto",[0, 0, 0],[180, 250, 50]))
-    l.append(Cor_Resistor(1,"Marrom",[0, 102, 0],[16, 255, 75]))
-    l.append(Cor_Resistor(3,"Laranja",[9, 100, 80],[11, 255, 255]))
-    l.append(Cor_Resistor(4,"Amarelo",[20, 130, 100],[30, 250, 160]))
-    l.append(Cor_Resistor(5,"Verde",[45, 50, 60],[72, 250, 150]))
-    l.append(Cor_Resistor(6,"Azul",[80, 50, 50],[106, 250, 150]))
-    l.append(Cor_Resistor(7,"Roxo",[130, 40, 50],[155, 250, 150]))
-    l.append(Cor_Resistor(8,"Cinza",[0,0, 50],[180, 50, 80]))
-    l.append(Cor_Resistor(9,"Branco",[0, 0, 90],[180, 15, 140]))
-    l.append(Cor_Resistor(2,"Vermelho1",[0, 76, 45],[7, 255, 2555]))
-    l.append(Cor_Resistor(2,"Vermelho2",[170, 65, 102],[180, 255, 255]))
+    #l.append(Cor_Resistor(1,"Marrom",[0, 102, 0],[16, 255, 75]))
+    #l.append(Cor_Resistor(3,"Laranja",[9, 100, 80],[11, 255, 255]))
+    #l.append(Cor_Resistor(4,"Amarelo",[20, 130, 100],[30, 250, 160]))
+    #l.append(Cor_Resistor(5,"Verde",[45, 50, 60],[72, 250, 150]))
+    #l.append(Cor_Resistor(6,"Azul",[80, 50, 50],[106, 250, 150]))
+    #l.append(Cor_Resistor(7,"Roxo",[130, 40, 50],[155, 250, 150]))
+    #l.append(Cor_Resistor(8,"Cinza",[0,0, 50],[180, 50, 80]))
+    #l.append(Cor_Resistor(9,"Branco",[0, 0, 90],[180, 15, 140]))
+    #l.append(Cor_Resistor(2,"Vermelho1",[0, 76, 45],[7, 255, 2555]))
+    #l.append(Cor_Resistor(2,"Vermelho2",[170, 65, 102],[180, 255, 255]))
 
     plt.subplot(len(l)+1,2,1),plt.imshow(rgb,cmap = 'gray')
     plt.title(img+'Original'), plt.xticks([]), plt.yticks([])

@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7c1e5d1e-40b8-4d0d-9857-52688a7281cd}</ProjectGuid>
+    <ProjectHome />
+    <StartupFile>app.py</StartupFile>
+    <SearchPath />
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <InterpreterId />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <PropertyGroup>
+    <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="app_saves\Amarelomask.jpg" />
+    <Content Include="app_saves\Amarelores.jpg" />
+    <Content Include="app_saves\Azulmask.jpg" />
+    <Content Include="app_saves\Azulres.jpg" />
+    <Content Include="app_saves\bluemask.jpg" />
+    <Content Include="app_saves\blueres.jpg" />
+    <Content Include="app_saves\Brancomask.jpg" />
+    <Content Include="app_saves\Brancores.jpg" />
+    <Content Include="app_saves\Cinzamask.jpg" />
+    <Content Include="app_saves\Cinzares.jpg" />
+    <Content Include="app_saves\closed.jpg" />
+    <Content Include="app_saves\crop_img.jpg" />
+    <Content Include="app_saves\edges.jpg" />
+    <Content Include="app_saves\gray.jpg" />
+    <Content Include="app_saves\graymask.jpg" />
+    <Content Include="app_saves\grayres.jpg" />
+    <Content Include="app_saves\greenmask.jpg" />
+    <Content Include="app_saves\greenres.jpg" />
+    <Content Include="app_saves\Laranjamask.jpg" />
+    <Content Include="app_saves\Laranjares.jpg" />
+    <Content Include="app_saves\Marrommask.jpg" />
+    <Content Include="app_saves\Marromres.jpg" />
+    <Content Include="app_saves\mask.jpg" />
+    <Content Include="app_saves\orangemask.jpg" />
+    <Content Include="app_saves\orangeres.jpg" />
+    <Content Include="app_saves\Pretomask.jpg" />
+    <Content Include="app_saves\Pretores.jpg" />
+    <Content Include="app_saves\purplemask.jpg" />
+    <Content Include="app_saves\purpleres.jpg" />
+    <Content Include="app_saves\recortada.jpg" />
+    <Content Include="app_saves\res.jpg" />
+    <Content Include="app_saves\rgb.jpg" />
+    <Content Include="app_saves\Roxomask.jpg" />
+    <Content Include="app_saves\Roxores.jpg" />
+    <Content Include="app_saves\Verdemask.jpg" />
+    <Content Include="app_saves\Verderes.jpg" />
+    <Content Include="app_saves\Vermelho1mask.jpg" />
+    <Content Include="app_saves\Vermelho1res.jpg" />
+    <Content Include="app_saves\Vermelho2mask.jpg" />
+    <Content Include="app_saves\Vermelho2res.jpg" />
+    <Content Include="app_saves\whitemask.jpg" />
+    <Content Include="app_saves\whiteres.jpg" />
+    <Content Include="app_saves\yellowmask.jpg" />
+    <Content Include="app_saves\yellowres.jpg" />
+    <Content Include="Figure_1.png" />
+    <Content Include="fotos_reais\Real_GIF.gif" />
+    <Content Include="fotos_reais\Real_JPEG.jpg" />
+    <Content Include="fotos_reais\Real_png.png" />
+    <Content Include="Relatório\Captura_Borda.PNG" />
+    <Content Include="Relatório\Capture.PNG" />
+    <Content Include="Relatório\closed.jpg" />
+    <Content Include="Relatório\Corta_resistor.PNG" />
+    <Content Include="Relatório\Corta_resistor2.PNG" />
+    <Content Include="Relatório\edges.jpg" />
+    <Content Include="Relatório\filtro_de_cores.PNG" />
+    <Content Include="Relatório\gray.jpg" />
+    <Content Include="Relatório\rgb.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="app.py" />
+    <Compile Include="Tentativas_useless\detect_shapes.py" />
+    <Compile Include="Tentativas_useless\ShapeDetector.py" />
+    <Compile Include="Tentativas_useless\try_detect_shapes.py" />
+    <Compile Include="util\app_laplaciano.py" />
+    <Compile Include="util\binariza.py" />
+    <Compile Include="util\binariza_mostra_linhas.py" />
+    <Compile Include="util\detect_lines.py" />
+    <Compile Include="util\mostra_img.py" />
+    <Compile Include="util\Mostra_Linhas.py" />
+    <Compile Include="util\rect_detect.py" />
+    <Compile Include="util\Try_ret_resist.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="app_saves" />
+    <Folder Include="fotos_reais" />
+    <Folder Include="Relatório" />
+    <Folder Include="Tentativas_useless" />
+    <Folder Include="util" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+</Project>

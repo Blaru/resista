@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2000
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "opcencv", "opcencv.pyproj", "{7C1E5D1E-40B8-4D0D-9857-52688A7281CD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7C1E5D1E-40B8-4D0D-9857-52688A7281CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C1E5D1E-40B8-4D0D-9857-52688A7281CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2D94899A-8016-4C76-BA5C-D4377CECF1A8}
+	EndGlobalSection
+EndGlobal
