@@ -1,11 +1,13 @@
 #Imports para OpenCV
 import numpy as np
 import cv2
+import matplotlib.pyplot as plt
 #Imports para Base64 e JSON
 import json
 from imageio import imread
 import io
 import base64
+from cores import Cores
 ##################
 #Variaveis Para Function Filtra_Contorno
 IS_FOUND = 0
@@ -72,3 +74,54 @@ def crop_imagem(rgb,edges,closed):
     res = cv2.bitwise_and(rgb,rgb, mask= closed)
     crop_img = res[SE[0]:ID[0], SE[1]:ID[1]]
     return crop_img
+
+def Blur(img):
+    frame = img
+    #frame = cv2.GaussianBlur(frame,(5,5),cv2.BORDER_DEFAULT)   #1.71%
+    #frame = cv2.blur(frame,(5,5))                              #1.51%
+    #frame = median = cv2.medianBlur(crop_img,5)
+    frame = cv2.bilateralFilter(frame,9,75,75)                  #3.51%
+    frame = cv2.medianBlur(frame,3)                   #3.07%
+    return frame
+
+def Aplica_Filtros(frame):
+    # Converte RGB to HSV
+    hsv = cv2.cvtColor(frame, cv2.COLOR_RGB2HSV)
+
+    plt.subplot(len(l)+1,2,1),plt.imshow(rgb,cmap = 'gray')
+    plt.title(img+'Original'), plt.xticks([]), plt.yticks([])
+    plt.subplot(len(l)+1,2,2),plt.imshow(frame,cmap = 'gray')
+    plt.title('recortada'), plt.xticks([]), plt.yticks([])
+    cv2.imwrite( '/app_saves/recortada.jpg', frame )
+
+    #Atualiza dimensão da imagem cortada para saber % de cada cor
+    height, width,layers = frame.shape
+    frm_cnt = 3
+    for cor in Cores:
+        mask = cv2.inRange(hsv, color.lower, color.upper)
+        res = cv2.bitwise_and(frame,frame, mask= mask)  # Bitwise-AND Mascara e original
+
+        plt.subplot(len(l)+1,2,frm_cnt),plt.imshow(mask,cmap = 'gray')
+        percent = (cv2.countNonZero(mask)/(height*width))*100
+        plt.title(color.nome+'('+str(percent)+'%)'), plt.xticks([]), plt.yticks([])
+        #cv2.imwrite(('/app_saves/'+color.nome+'mask.jpg'), mask)
+        frm_cnt = frm_cnt+1
+
+        plt.subplot(len(l)+1,2,frm_cnt),plt.imshow(res,cmap = 'gray')
+        plt.title(color.nome), plt.xticks([]), plt.yticks([])
+        #cv2.imwrite( ('/app_saves/'+color.nome+'res.jpg'), res )
+        frm_cnt = frm_cnt+1
+
+
+    plt.show()
+    
+def Plota(imgs,index,cnt,rgb,frame):
+    plt.subplot(len(imgs),2,index),plt.imshow(rgb,cmap = 'gray')
+    plt.title('Original'), plt.xticks([]), plt.yticks([])
+    index+=1
+    plt.subplot(len(imgs),2,index),plt.imshow(frame,cmap = 'gray')
+    plt.title('frame'), plt.xticks([]), plt.yticks([])
+    cv2.imwrite(('/app_saves/frame'+str(cnt)+'.jpg'), frame)
+    index+=1
+    cnt += 1
+    return [index,cnt]
