@@ -11,7 +11,7 @@ from cores import Cores
 ##################
 #Variaveis Para Function Filtra_Contorno
 IS_FOUND = 0
-MORPH = 121
+MORPH = 255
 CANNY = 255
 _width  = 600.0
 _height = 420.0
@@ -32,8 +32,9 @@ def Filtra_Contorno(rgb):
     kernel = cv2.getStructuringElement( cv2.MORPH_RECT, ( MORPH, MORPH ) )
     closed = cv2.morphologyEx( edges, cv2.MORPH_CLOSE, kernel )
     # Essa função acha os contornos
-    im2,contours,h = cv2.findContours( closed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE )
-    return [im2,contours,h,edges,closed]
+    im2,contours,hierarchy = cv2.findContours( closed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE )
+
+    return [im2,contours,hierarchy,edges,closed]
 
 def crop_imagem(rgb,edges,closed):
     print('rgb Dimensions:\t' ,rgb.shape)
@@ -72,7 +73,7 @@ def crop_imagem(rgb,edges,closed):
     print('Largura:\t',w)
     #crop_img = img[y:y+h, x:x+w]
     res = cv2.bitwise_and(rgb,rgb, mask= closed)
-    crop_img = res[SE[0]:ID[0], SE[1]:ID[1]]
+    crop_img = res[ SE[0]:ID[0] , SE[1]:ID[1] ]
     return crop_img
 
 def Blur(img):
@@ -87,41 +88,38 @@ def Blur(img):
 def Aplica_Filtros(frame):
     # Converte RGB to HSV
     hsv = cv2.cvtColor(frame, cv2.COLOR_RGB2HSV)
-
-    plt.subplot(len(l)+1,2,1),plt.imshow(rgb,cmap = 'gray')
-    plt.title(img+'Original'), plt.xticks([]), plt.yticks([])
-    plt.subplot(len(l)+1,2,2),plt.imshow(frame,cmap = 'gray')
-    plt.title('recortada'), plt.xticks([]), plt.yticks([])
-    cv2.imwrite( '/app_saves/recortada.jpg', frame )
-
     #Atualiza dimensão da imagem cortada para saber % de cada cor
     height, width,layers = frame.shape
-    frm_cnt = 3
+
     for cor in Cores:
-        mask = cv2.inRange(hsv, color.lower, color.upper)
-        res = cv2.bitwise_and(frame,frame, mask= mask)  # Bitwise-AND Mascara e original
+        print ('Cor:\t'+cor.nome)
+        for filtro in cor.Filtros:
+            try:
+                Mask
+            except NameError:
+                Mask = cv2.inRange(hsv, filtro.lower, filtro.upper)
+                print ('Undefined\t'+str(cv2.countNonZero(Mask)))
+            else:
+                mask = cv2.inRange(hsv, filtro.lower, filtro.upper)
+                Mask = cv2.bitwise_or(mask,Mask)      # Bitwise-AND Mascara e original
+                print ('defined\t'+str(cv2.countNonZero(mask)))
+        print ('Final\t'+str(cv2.countNonZero(Mask)))
+        h,w,s = frame.shape
+        porcentagem = (cv2.countNonZero(Mask)/(h*w))*100
+        filtrado  = cv2.bitwise_and(frame,frame, mask= Mask)
+        plt.subplot(1,2,1),plt.imshow(frame,cmap = 'gray')
+        plt.title('frame'), plt.xticks([]), plt.yticks([])
+        plt.subplot(1,2,2),plt.imshow(filtrado,cmap = 'gray')
+        plt.title('filtrado\t'+str(porcentagem)), plt.xticks([]), plt.yticks([])
+        plt.show()
 
-        plt.subplot(len(l)+1,2,frm_cnt),plt.imshow(mask,cmap = 'gray')
-        percent = (cv2.countNonZero(mask)/(height*width))*100
-        plt.title(color.nome+'('+str(percent)+'%)'), plt.xticks([]), plt.yticks([])
-        #cv2.imwrite(('/app_saves/'+color.nome+'mask.jpg'), mask)
-        frm_cnt = frm_cnt+1
-
-        plt.subplot(len(l)+1,2,frm_cnt),plt.imshow(res,cmap = 'gray')
-        plt.title(color.nome), plt.xticks([]), plt.yticks([])
-        #cv2.imwrite( ('/app_saves/'+color.nome+'res.jpg'), res )
-        frm_cnt = frm_cnt+1
-
-
-    plt.show()
-    
 def Plota(imgs,index,cnt,rgb,frame):
     plt.subplot(len(imgs),2,index),plt.imshow(rgb,cmap = 'gray')
     plt.title('Original'), plt.xticks([]), plt.yticks([])
     index+=1
     plt.subplot(len(imgs),2,index),plt.imshow(frame,cmap = 'gray')
     plt.title('frame'), plt.xticks([]), plt.yticks([])
-    cv2.imwrite(('/app_saves/frame'+str(cnt)+'.jpg'), frame)
+    cv2.imwrite(('./app_saves/frame'+str(cnt)+'.jpg'), cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
     index+=1
     cnt += 1
     return [index,cnt]

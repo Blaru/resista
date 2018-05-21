@@ -4,21 +4,10 @@ import numpy as np
 import cv2
 import matplotlib.pyplot as plt
 from Cor import Cor
-from Lib import Filtra_Contorno,get_Image,crop_imagem,Blur,Aplica_Filtros,Plota
-
+from Lib import Filtra_Contorno, get_Image, crop_imagem, Blur,Aplica_Filtros, Plota
 imgs = []
-# Define imagem do arquivo data.json
-"""
-imgs.append("IMG1")
-imgs.append("IMG2")
-imgs.append("face")
+# Define imagens
 imgs.append("Resistor_Real")
-imgs.append("RR_GIF")
-imgs.append("RR2")
-imgs.append("RR_JPG")
-imgs.append("resistor")
-imgs.append('R12K')
-"""
 imgs.append("resistor")
 imgs.append('R12K')
 imgs.append('R10K')
@@ -37,10 +26,10 @@ for img in imgs:
 
     # Uniformiza cores para melhorar filtragem
     frame = Blur(croped)
-
+    #Aplica_Filtros(frame)
     #Plota imagem
     index,cnt = Plota(imgs,index,cnt,rgb,frame)
-    
+
 plt.show()
 
 print('End')
