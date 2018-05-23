@@ -11,10 +11,15 @@ imgs.append("Resistor_Real")
 imgs.append("resistor")
 imgs.append('R12K')
 imgs.append('R10K')
+imgs.append('330K')
+imgs.append('120K')
+imgs.append('150K')
+imgs.append('180K')
 
 index=1
 cnt=1
 for img in imgs:
+    print('\n',img,'\n')
     # Decodifica imagem de base64 e le em formato cv2
     rgb = get_Image(img)
 
@@ -22,13 +27,13 @@ for img in imgs:
     im2,contours,h,edges,closed = Filtra_Contorno(rgb)
 
     # Faz Bitwise and com mascara filtrada e redimensiona com parte util
-    croped = crop_imagem(rgb,edges,closed)
+    croped,crop_mask = crop_imagem(rgb,edges,closed)
 
     # Uniformiza cores para melhorar filtragem
     frame = Blur(croped)
     #Aplica_Filtros(frame)
     #Plota imagem
-    index,cnt = Plota(imgs,index,cnt,rgb,frame)
+    index,cnt = Plota(imgs,index,cnt,rgb,frame,crop_mask,edges,img)
 
 plt.show()
 
