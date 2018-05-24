@@ -10,12 +10,8 @@ import base64
 from cores import Cores
 ##################
 #Variaveis Para Function Filtra_Contorno
-IS_FOUND = 0
-MORPH = 255
+
 CANNY = 255
-_width  = 600.0
-_height = 420.0
-_margin = 5
 ##################
 # importa arquivo data.json
 data = json.load(open('data.json'))
@@ -23,29 +19,58 @@ def get_Image(nome):
     return imread(io.BytesIO(base64.b64decode(data[nome]["data"])))
 
 def Filtra_Contorno(rgb):
+    h,w,s = rgb.shape
     # Aplica escala de cinza na imagem
     gray = cv2.cvtColor( rgb, cv2.COLOR_BGR2GRAY )
     gray = cv2.bilateralFilter( gray, 1, 10, 120 )
     # Detecta edges na  imagem
     edges  = cv2.Canny(gray, 10,CANNY )
-    # Não sei o que essa parada faz
-    kernel = cv2.getStructuringElement( cv2.MORPH_RECT, ( MORPH, MORPH ) )
+    # Nao sei o que essa parada faz
+    kernel = cv2.getStructuringElement( cv2.MORPH_RECT, ( w/2, h/2 ) )
     closed = cv2.morphologyEx( edges, cv2.MORPH_CLOSE, kernel )
-    # Essa função acha os contornos
-    im2,contours,hierarchy = cv2.findContours( closed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE )
-
-    return [im2,contours,hierarchy,edges,closed]
+    # Essa funco acha os contornos
+    im2,contours,h = cv2.findContours( closed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE )
+    return [im2,contours,h,edges,closed]
 
 def crop_imagem(rgb,edges,closed):
     print('rgb Dimensions:\t' ,rgb.shape)
     height, width,layers = rgb.shape
+    #Esse bloco vai varrer para pegar o retangulo util do contorno
+    #edges[503][221]
+    #edges[row][colum]
+    encontrou = 0
+    for x in range(0, height):
+        if (encontrou==1):
+            break
+        for y in range(0, width):
+            #print("Superior esquerdo:\t",x,':',y)
+            if(edges[x][y]==255):
+                SE = (x,y)
+                print("Superior esquerdo:\t",SE)
+                encontrou =1
+                break
 
-    rect = cv2.boundingRect(edges)               # function that computes the rectangle of interest
+    encontrou = 0
+    for x in range(height-1,0,-1):
+        if (encontrou==1):
+            break
+        for y in range(width-1,0,-1):
+            #print("Inferior esquerdo:\t",x,':',y)
+            if(edges[x][y]==255):
+                ID = (x,y)
+                print("Inferior Direito:\t",ID)
+                encontrou =1
+                break
 
-    img = np.ones([600,600, 3], dtype=np.uint8) # arbitrary image
-    crop_img = rgb[rect[0]:(rect[0]+rect[2]), rect[1]:(rect[1]+rect[3])]
-    crop_mask = closed[rect[0]:(rect[0]+rect[2]), rect[1]:(rect[1]+rect[3])]
-    return [crop_img,crop_mask]
+    #Calcula Altura e Largura  do crop para processar
+    h = ID[0]-SE[0]
+    w = ID[1]-SE[1]
+    print('Altura:\t',h)
+    print('Largura:\t',w)
+    #crop_img = img[y:y+h, x:x+w]
+    res = cv2.bitwise_and(rgb,rgb, mask= closed)
+    crop_img = res[SE[0]:ID[0], SE[1]:ID[1]]
+    return crop_img
 
 def Blur(img):
     frame = img
@@ -59,7 +84,7 @@ def Blur(img):
 def Aplica_Filtros(frame):
     # Converte RGB to HSV
     hsv = cv2.cvtColor(frame, cv2.COLOR_RGB2HSV)
-    #Atualiza dimensão da imagem cortada para saber % de cada cor
+    #Atualiza dimensao da imagem cortada para saber % de cada cor
     height, width,layers = frame.shape
 
     for cor in Cores:
@@ -84,20 +109,20 @@ def Aplica_Filtros(frame):
         plt.title('filtrado\t'+str(porcentagem)), plt.xticks([]), plt.yticks([])
         plt.show()
 
-def Plota(imgs,index,cnt,rgb,frame,crop_mask,closed,img):
+def Plota(imgs,index,cnt,rgb,frame,edges,closed,crop_img,img):
     plt.subplot(len(imgs),4,index),plt.imshow(rgb,cmap = 'gray')
     plt.title(img), plt.xticks([]), plt.yticks([])
     index+=1
 
-    plt.subplot(len(imgs),4,index),plt.imshow(closed,cmap = 'gray')
+    plt.subplot(len(imgs),4,index),plt.imshow(edges,cmap = 'gray')
     plt.title('mask'), plt.xticks([]), plt.yticks([])
     index+=1
 
-    plt.subplot(len(imgs),4,index),plt.imshow(crop_mask,cmap = 'gray')
-    plt.title('crop_mask'), plt.xticks([]), plt.yticks([])
+    plt.subplot(len(imgs),4,index),plt.imshow(closed,cmap = 'gray')
+    plt.title('closed'), plt.xticks([]), plt.yticks([])
     index+=1
 
-    plt.subplot(len(imgs),4,index),plt.imshow(frame,cmap = 'gray')
+    plt.subplot(len(imgs),4,index),plt.imshow(crop_img,cmap = 'gray')
     plt.title('frame'), plt.xticks([]), plt.yticks([])
     cv2.imwrite(('./app_saves/frame'+str(cnt)+'.jpg'), cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
     index+=1
