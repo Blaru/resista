@@ -1,12 +1,16 @@
 from Cor import Cor
 #________________________________________________
 Preto = Cor(0,"Preto")
-Preto.add_filtro([16, 0, 0],[30, 163, 165])
+Preto.add_filtro([15, 51, 0],[30, 102, 90])
 
 #________________________________________________
 Marrom = Cor(1,"Marrom")
-Marrom.add_filtro([7, 61, 119],[12, 127, 210])
-Marrom.add_filtro([4, 61, 119],[7, 127, 210])
+#Marrom.add_filtro([5, 56, 17],[16, 178, 102])  #Marrom 4
+Marrom.add_filtro([5, 56, 17],[16, 178, 91])  #Marrom 4.2
+Marrom.add_filtro([0, 117, 53],[12, 229, 115])  #Marrom 5
+Marrom.add_filtro([177, 117, 53],[180, 229, 115])  #Marrom 5
+Marrom.add_filtro([8, 61, 120],[12, 130, 170])  #Marrom 6
+#Marrom.add_filtro([4, 61, 119],[7, 127, 210])
 
 #________________________________________________
 Vermelho=	Cor(2,"Vermelho")
@@ -17,23 +21,27 @@ Vermelho.add_filtro([3, 150, 46],[10, 255, 104])    #Vermelho 3
 
 #________________________________________________
 Laranja = Cor(3,"Laranja")
-Laranja.add_filtro([10, 81, 178],[13, 164, 238])
+Laranja.add_filtro([22, 72, 74],[26, 104, 90])     #Laranja 1
+Laranja.add_filtro([12, 150, 69],[15, 255, 107])    #Laranja 2
+Laranja.add_filtro([9, 143, 62],[12, 255, 125])     #Laranja 3
+Laranja.add_filtro([8, 71, 176],[14, 158, 244])     #Laranja 4
 
 #________________________________________________
 Amarelo	=	Cor(4,"Amarelo")
-Amarelo.add_filtro([20, 130, 100],[30, 250, 160])
+Amarelo.add_filtro([19, 125, 91],[25, 250, 120]) #Todos os Amarelos
 
 #________________________________________________
 Verde	=	Cor(5,"Verde")
-Verde.add_filtro([45, 50, 60],[72, 250, 150])
+Verde.add_filtro([45, 130, 58],[72, 255, 150])  # Verde 1
 
 #________________________________________________
 Azul	=	Cor(6,"Azul")
-Azul.add_filtro([80, 50, 50],[106, 250, 150])
+Azul.add_filtro([80, 50, 50],[106, 250, 150])   #
 
 #________________________________________________
 Roxo	=	Cor(7,"Roxo")
-Roxo.add_filtro([130, 40, 50],[155, 250, 150])
+Roxo.add_filtro([0, 46, 28],[2, 220, 188])
+Roxo.add_filtro([140, 46, 28],[180, 220, 188])
 
 #________________________________________________
 Cinza	=	Cor(8,"Cinza")
@@ -45,11 +53,11 @@ Branco.add_filtro([0, 0, 90],[180, 15, 140])
 
 #________________________________________________
 Cores=[]
-#Cores.append(Preto)
-#Cores.append(Marrom)
+Cores.append(Preto)
+Cores.append(Marrom)
 Cores.append(Vermelho)
-#Cores.append(Laranja)
-#Cores.append(Amarelo)
+Cores.append(Laranja)
+Cores.append(Amarelo)
 #Cores.append(Verde)
 #Cores.append(Azul)
 #Cores.append(Roxo)

@@ -41,13 +41,15 @@ def Blur(img):
     img = cv2.medianBlur(img,3)                   #3.07%
     return img
 
-def Aplica_Filtros(frame):
+def Aplica_Filtros(frame,img):
     # Converte RGB to HSV
     hsv = cv2.cvtColor(frame, cv2.COLOR_RGB2HSV)
     #Atualiza dimensao da imagem cortada para saber % de cada cor
-    height, width,layers = frame.shape
-
+    h, w,layers = frame.shape
+    index=0
     for cor in Cores:
+        Mask = 1
+        del Mask
         print ('Cor:\t'+cor.nome)
         for filtro in cor.Filtros:
             try:
@@ -59,15 +61,25 @@ def Aplica_Filtros(frame):
                 mask = cv2.inRange(hsv, filtro.lower, filtro.upper)
                 Mask = cv2.bitwise_or(mask,Mask)      # Bitwise-AND Mascara e original
                 print ('defined\t'+str(cv2.countNonZero(mask)))
+        cor.mask_cnt = cv2.countNonZero(Mask)
+        cor.mask_percent = (cv2.countNonZero(Mask)/(h*w))*100
+        cor.Mask = Mask
         print ('Final\t'+str(cv2.countNonZero(Mask)))
         h,w,s = frame.shape
-        porcentagem = (cv2.countNonZero(Mask)/(h*w))*100
         filtrado  = cv2.bitwise_and(frame,frame, mask= Mask)
-        plt.subplot(1,2,1),plt.imshow(frame,cmap = 'gray')
-        plt.title('frame'), plt.xticks([]), plt.yticks([])
-        plt.subplot(1,2,2),plt.imshow(filtrado,cmap = 'gray')
-        plt.title('filtrado\t'+str(porcentagem)), plt.xticks([]), plt.yticks([])
-        plt.show()
+        index+=1
+        plt.subplot(len(Cores),2,index),plt.imshow(frame,cmap = 'gray')
+        plt.title(img+'(h:'+str(h)+', w'+str(w)+')'), plt.xticks([]), plt.yticks([])
+        index+=1
+        invertMask = cv2.bitwise_not(cor.Mask, cor.Mask)
+        plt.subplot(len(Cores),2,index),plt.plot(cv2.calcHist([cor.Mask], [0], invertMask, [256], [0,256]), color='b')
+        plt.title(cor.nome +': '+str(cor.mask_cnt)), plt.xticks([]), plt.yticks([])
+
+
+
+    mng = plt.get_current_fig_manager()
+    mng.resize(*mng.window.maxsize())
+    plt.show()
 
 def Plota(imgs,index,cnt,rgb,edges,crop_img,frame,img):
     plt.subplot(len(imgs),4,index),plt.imshow(rgb,cmap = 'gray')

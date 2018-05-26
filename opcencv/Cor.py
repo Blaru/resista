@@ -11,5 +11,7 @@ class Cor(object):
         self.valor = valor
         self.nome = nome
         self.Filtros = []
+        self.mask_cnt=0
+        self.mask_percent=0
     def add_filtro(self,lower,upper):
         self.Filtros.append(Filtro(lower,upper))
