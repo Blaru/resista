@@ -8,6 +8,7 @@ from imageio import imread
 import io
 import base64
 from cores import Cores
+from plot_Histograma import plot_Histograma
 ##################
 #Variaveis Para Function Filtra_Contorno
 
@@ -34,14 +35,18 @@ def Filtra_Contorno(rgb):
 
 def crop_imagem(rgb,edges,closed):
     x,y,w,h = cv2.boundingRect(edges)
-    return [edges[y:y+h,x:x+w],rgb[y:y+h,x:x+w],0]
+    return [edges[y:y+h,x:x+w],rgb[y:y+h,x:x+w]]
 
 def Blur(img):
+    h,w,s = img.shape
+    #blur
+    #GaussianBlur
     img = cv2.bilateralFilter(img,9,75,75)                  #3.51%
+    img = cv2.GaussianBlur(img,(5,5),0)
     img = cv2.medianBlur(img,3)                   #3.07%
     return img
 
-def Aplica_Filtros(frame,img):
+def Aplica_Filtros(frame):
     # Converte RGB to HSV
     hsv = cv2.cvtColor(frame, cv2.COLOR_RGB2HSV)
     #Atualiza dimensao da imagem cortada para saber % de cada cor
@@ -67,36 +72,41 @@ def Aplica_Filtros(frame,img):
         print ('Final\t'+str(cv2.countNonZero(Mask)))
         h,w,s = frame.shape
         filtrado  = cv2.bitwise_and(frame,frame, mask= Mask)
-        index+=1
-        plt.subplot(len(Cores),2,index),plt.imshow(frame,cmap = 'gray')
-        plt.title(img+'(h:'+str(h)+', w'+str(w)+')'), plt.xticks([]), plt.yticks([])
-        index+=1
-        invertMask = cv2.bitwise_not(cor.Mask, cor.Mask)
-        plt.subplot(len(Cores),2,index),plt.plot(cv2.calcHist([cor.Mask], [0], invertMask, [256], [0,256]), color='b')
-        plt.title(cor.nome +': '+str(cor.mask_cnt)), plt.xticks([]), plt.yticks([])
+    return Cores
 
+def Analisa_Mascaras(Cores):
+    histogramas = []
+    for cor in Cores:
+        histograma = []
+        mediana = []
+        h,w = cor.Mask.shape
+        k = w%2 # =0 se par e 1 se impar
+        media =  cv2.countNonZero(cor.Mask)/w
+        for x in range(0,w-k,2):
+            histograma.append(cv2.countNonZero(cor.Mask[0:h,x:x+1]))
+            mediana.append(media)
+        cor.histograma = histograma
+        cor.mediana = mediana
+    return Cores
 
-
-    mng = plt.get_current_fig_manager()
-    mng.resize(*mng.window.maxsize())
-    plt.show()
-
-def Plota(imgs,index,cnt,rgb,edges,crop_img,frame,img):
-    plt.subplot(len(imgs),4,index),plt.imshow(rgb,cmap = 'gray')
+def Plota(img,imgs,index,rgb,edges,crop_mask,frame,Cores):
+    size = len(imgs)
+    print('size:',size,',5,index:',index)
+    plt.subplot(size,5,index)
+    plt.imshow(rgb,cmap = 'gray')
     plt.title(img), plt.xticks([]), plt.yticks([])
-    index+=1
 
-    plt.subplot(len(imgs),4,index),plt.imshow(edges,cmap = 'gray')
+    plt.subplot(size,5,index+1),plt.imshow(edges,cmap = 'gray')
     plt.title('mask'), plt.xticks([]), plt.yticks([])
-    index+=1
 
-    plt.subplot(len(imgs),4,index),plt.imshow(crop_img,cmap = 'gray')
-    plt.title('crop_img'), plt.xticks([]), plt.yticks([])
-    index+=1
+    plt.subplot(size,5,index+2),plt.imshow(crop_mask,cmap = 'gray')
+    plt.title('crop_mask'), plt.xticks([]), plt.yticks([])
 
-    plt.subplot(len(imgs),4,index),plt.imshow(frame,cmap = 'gray')
+    plt.subplot(size,5,index+3),plt.imshow(frame,cmap = 'gray')
     plt.title('frame'), plt.xticks([]), plt.yticks([])
-    cv2.imwrite(('./app_saves/frame'+str(cnt)+'.jpg'), cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
-    index+=1
-    cnt += 1
-    return [index,cnt]
+
+    plt.subplot(size,5,index+4)
+    h,w = crop_mask.shape
+    plot_Histograma(plt,h,w,Cores)
+    index+=5
+    return index

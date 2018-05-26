@@ -1,0 +1,57 @@
+{
+  "$jason": {
+    "head": {
+      "title": "Resista",
+      "description":"Esse app envia fotos para um servidor e exibe sua resposta como imagem processada",
+      "actions":{
+          "$load":{
+              "type":"$network.request",
+              "options":{"url":"http://pelagaggi.pe.hu/app_folder/cats.json"},
+              "success":{
+                  "type":"$render"
+              }
+          }
+      },
+      "templates":{
+        "body":{
+          "sections":[{
+            "items":{
+              "{{#each $jason.cats}}":{
+                "type":"horizontal",
+                "style":{"spacing":"10"},
+                "action":{
+                  "type":"$util.alert",
+                  "options":{
+                    "title":"curtiu?",
+                    "description":  "Dá joinha"
+                  },
+                  "success":{
+                      "type":"$util.banner",
+                      "options":{
+                        "title":"{{name}}",
+                        "description":  "Disse {{quote}}"
+                      }
+                  }
+                },
+                "components":[
+                  {
+                    "type":"image",
+                    "url":"{{image}}",
+                    "style":{"width":"50","height":"50","corner_radius":"25"}
+                  },
+                  {"type":"vertical",
+                  "style":{"spacing":"5"},
+                  "components":[
+                    {"type":"label","text":"{{name}}","style":{"font":"HelveticaNeue-Bold","size":"14"}},
+                    {"type":"label","text":"{{quote}}","style":{"Color":"#cecece","size":"12"}},
+                    {"type":"image","url":"{{image}}","style":{"width":"100%"}}
+                  ]
+                }]
+              }
+            }
+          }]
+        }
+      }
+    }
+  }
+}

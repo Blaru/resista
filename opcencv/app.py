@@ -4,15 +4,16 @@ import numpy as np
 import cv2
 import matplotlib.pyplot as plt
 from Cor import Cor
-from Lib import Filtra_Contorno, get_Image, crop_imagem, Blur,Aplica_Filtros, Plota
+from Lib import Filtra_Contorno, get_Image, crop_imagem, Blur,Aplica_Filtros,Plota,Analisa_Mascaras
 imgs = []
 # Define imagens
-imgs.append("Resistor_Real") #BOM
+imgs.append("R1.2") #BOM
 #"""
-imgs.append("resistor")     #Melhor
+#imgs.append("R270")     #Melhor
 imgs.append('R12K')
 
 imgs.append('R10K')
+#"""
 """
 imgs.append('330K')
 imgs.append('120K')
@@ -21,7 +22,6 @@ imgs.append('180K')
 #"""
 
 index=1
-cnt=1
 for img in imgs:
     print('\n',img,'\n')
     # Decodifica imagem de base64 e le em formato cv2
@@ -31,14 +31,20 @@ for img in imgs:
     im2,contours,h,edges,closed = Filtra_Contorno(rgb)
 
     # Faz Bitwise and com mascara filtrada e redimensiona com parte util
-    crop_mask,crop_img,fail = crop_imagem(rgb,edges,closed)
+    crop_mask,crop_img = crop_imagem(rgb,edges,closed)
 
     # Uniformiza cores para melhorar filtragem
     frame = Blur(crop_img)
-    Aplica_Filtros(frame,img)
-    #Plota imagem
-    #index,cnt = Plota(imgs,index,cnt,rgb,edges,crop_mask,frame,img)
 
-#plt.show()
+    Cores = Aplica_Filtros(frame)
+
+    Cores  = Analisa_Mascaras(Cores)
+
+    index = Plota(img,imgs,index,rgb,edges,crop_mask,frame,Cores)
+
+plt.subplots_adjust(left=0.05, bottom=0.05, right=0.98, top=0.98,
+                wspace=0.3, hspace=0.3)
+
+plt.show()
 
 print('End')

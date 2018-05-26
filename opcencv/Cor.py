@@ -7,8 +7,9 @@ class Filtro(object):
         self.upper = np.array(upper)
 
 class Cor(object):
-    def __init__(self, valor, nome):
+    def __init__(self, valor, nome,color):
         self.valor = valor
+        self.color= color
         self.nome = nome
         self.Filtros = []
         self.mask_cnt=0
