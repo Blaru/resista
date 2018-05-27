@@ -48,7 +48,7 @@ Cinza	=	Cor(8,"Cinza",'grey')
 Cinza.add_filtro([0,0, 50],[180, 50, 80])
 
 #________________________________________________
-Branco	=	Cor(9,"Branco",'white')
+Branco	=	Cor(9,"Branco",'lavender')
 Branco.add_filtro([0, 0, 90],[180, 15, 140])
 
 #________________________________________________
@@ -62,4 +62,4 @@ Cores.append(Verde)
 Cores.append(Azul)
 Cores.append(Roxo)
 Cores.append(Cinza)
-Cores.append(Branco)
+#Cores.append(Branco)

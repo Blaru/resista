@@ -1,18 +1,14 @@
-
-from pprint import pprint
-import numpy as np
-import cv2
 import matplotlib.pyplot as plt
-from Cor import Cor
-from Lib import Filtra_Contorno, get_Image, crop_imagem, Blur,Aplica_Filtros,Plota,Analisa_Mascaras
+from Lib import Filtra_Contorno, get_Image, crop_imagem, Blur,Aplica_Filtros,Plota
+from processa import Analisa_Mascaras
 imgs = []
 # Define imagens
 imgs.append("R1.2") #BOM
 #"""
-#imgs.append("R270")     #Melhor
+imgs.append("R270")     #Melhor
 imgs.append('R12K')
 
-imgs.append('R10K')
+#imgs.append('R10K')
 #"""
 """
 imgs.append('330K')

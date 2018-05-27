@@ -7,11 +7,17 @@ import json
 from imageio import imread
 import io
 import base64
+#import para processamento de sinal
+from scipy import signal
+from scipy.signal import butter, lfilter
+#################
+#Bibliotecas próprias
+from processa import butter_lowpass_filter
 from cores import Cores
-from plot_Histograma import plot_Histograma
+from Cor import Pico
 ##################
+from plot_Histograma import plot_Histograma
 #Variaveis Para Function Filtra_Contorno
-
 CANNY = 255
 ##################
 # importa arquivo data.json
@@ -55,58 +61,41 @@ def Aplica_Filtros(frame):
     for cor in Cores:
         Mask = 1
         del Mask
-        print ('Cor:\t'+cor.nome)
+        #print ('Cor:\t'+cor.nome)
         for filtro in cor.Filtros:
             try:
                 Mask
             except NameError:
                 Mask = cv2.inRange(hsv, filtro.lower, filtro.upper)
-                print ('Undefined\t'+str(cv2.countNonZero(Mask)))
+                #print ('Undefined\t'+str(cv2.countNonZero(Mask)))
             else:
                 mask = cv2.inRange(hsv, filtro.lower, filtro.upper)
                 Mask = cv2.bitwise_or(mask,Mask)      # Bitwise-AND Mascara e original
-                print ('defined\t'+str(cv2.countNonZero(mask)))
+                #print ('defined\t'+str(cv2.countNonZero(mask)))
         cor.mask_cnt = cv2.countNonZero(Mask)
         cor.mask_percent = (cv2.countNonZero(Mask)/(h*w))*100
         cor.Mask = Mask
-        print ('Final\t'+str(cv2.countNonZero(Mask)))
+        #print ('Final\t'+str(cv2.countNonZero(Mask)))
         h,w,s = frame.shape
         filtrado  = cv2.bitwise_and(frame,frame, mask= Mask)
     return Cores
 
-def Analisa_Mascaras(Cores):
-    histogramas = []
-    for cor in Cores:
-        histograma = []
-        mediana = []
-        h,w = cor.Mask.shape
-        k = w%2 # =0 se par e 1 se impar
-        media =  cv2.countNonZero(cor.Mask)/w
-        for x in range(0,w-k,2):
-            histograma.append(cv2.countNonZero(cor.Mask[0:h,x:x+1]))
-            mediana.append(media)
-        cor.histograma = histograma
-        cor.mediana = mediana
-    return Cores
-
 def Plota(img,imgs,index,rgb,edges,crop_mask,frame,Cores):
     size = len(imgs)
-    print('size:',size,',5,index:',index)
-    plt.subplot(size,5,index)
-    plt.imshow(rgb,cmap = 'gray')
-    plt.title(img), plt.xticks([]), plt.yticks([])
+    #print('size:',size,',5,index:',index)
 
-    plt.subplot(size,5,index+1),plt.imshow(edges,cmap = 'gray')
-    plt.title('mask'), plt.xticks([]), plt.yticks([])
-
-    plt.subplot(size,5,index+2),plt.imshow(crop_mask,cmap = 'gray')
-    plt.title('crop_mask'), plt.xticks([]), plt.yticks([])
-
-    plt.subplot(size,5,index+3),plt.imshow(frame,cmap = 'gray')
+    plt.subplot(size,3,index),plt.imshow(frame,cmap = 'gray')
     plt.title('frame'), plt.xticks([]), plt.yticks([])
 
-    plt.subplot(size,5,index+4)
+    plt.subplot(size,3,index+1)
+    plt.title('Histograma')
     h,w = crop_mask.shape
     plot_Histograma(plt,h,w,Cores)
-    index+=5
+
+    plt.subplot(size,3,index+2)
+    plt.title('Filtrado')
+    h,w = crop_mask.shape
+    plot_Histograma(plt,h,w,Cores,Filtrado=True)
+
+    index+=3
     return index

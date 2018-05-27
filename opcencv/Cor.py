@@ -1,5 +1,11 @@
 import numpy as np
 #Definindo classes de cores dos resistores
+class Pico(object):
+    def __init__(self,inicio,fim,pto_alto):
+        self.inicio = inicio
+        self.fim = fim
+        self.largura = fim-inicio
+        self.pto_alto = pto_alto
 
 class Filtro(object):
     def __init__(self,lower,upper):
@@ -12,6 +18,7 @@ class Cor(object):
         self.color= color
         self.nome = nome
         self.Filtros = []
+        self.Picos = []
         self.mask_cnt=0
         self.mask_percent=0
     def add_filtro(self,lower,upper):
