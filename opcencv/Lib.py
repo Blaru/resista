@@ -85,7 +85,7 @@ def Plota(img,imgs,index,rgb,edges,crop_mask,frame,Cores):
     #print('size:',size,',5,index:',index)
 
     plt.subplot(size,3,index),plt.imshow(frame,cmap = 'gray')
-    plt.title('frame'), plt.xticks([]), plt.yticks([])
+    plt.title(img), plt.xticks([]), plt.yticks([])
 
     plt.subplot(size,3,index+1)
     plt.title('Histograma')

@@ -1,56 +1,53 @@
 import cv2
+from operator import attrgetter
 import numpy as np
+import peakutils
 from scipy.signal import butter, lfilter, find_peaks_cwt
 from Cor import Pico
 
 def Analisa_Mascaras(Cores):
-    histogramas = []
-    media_cores = 0
-    Ncores=0
     for cor in Cores:
-        Ncores+=1
-        media = []
         h,w = cor.Mask.shape
         cor.media =  cv2.countNonZero(cor.Mask)/w
-        media_cores+=cor.media
-    media_cores = media_cores/Ncores
+    Cores.sort(key=attrgetter('media'),reverse=True)# Ordena cores por percentual na foto
+    media_top3 = (Cores[0].media+Cores[1].media+Cores[2].media)/3
+    top = []
     for cor in Cores:
+        if(cor.media>=media_top3*0.3):
+            top.append(cor)
+    media_Top = 0 # Media de pixels das cores que mais significantes
+    for cor in top:
+        media_Top+= cor.media
+    media_Top = media_Top/6
+    for cor in top:
         histograma = []
         mediana = []
         h,w = cor.Mask.shape
         k = w%2 # =0 se par e 1 se impar
-        Pico_Mais_Alto=0
-        X_pico_do_pico = 0
-        pico_do_pico =0
-        dentro_do_pico = False
-        inicio_do_pico=0
-        minimo = 4*media_cores
         for x in range(0,w-k,2):
             valor = cv2.countNonZero(cor.Mask[0:h,x:x+1])
             histograma.append(valor)
             mediana.append(cor.media)
-        cor.histograma_Filtrado = butter_lowpass_filter(histograma,2,50, order=6)
-        for valor in cor.histograma_Filtrado:
-            if(valor>Pico_Mais_Alto):
-                Pico_Mais_Alto = valor
-            if(valor>pico_do_pico):
-                X_pico_do_pico = valor
-            if(dentro_do_pico==False and valor > minimo):
-                dentro_do_pico=True
-                inicio_do_pico=x
-            if(dentro_do_pico and valor<minimo):
-                cor.Picos.append( Pico(inicio_do_pico,x,X_pico_do_pico) )
-                dentro_do_pico=False
-                pico_do_pico =0
-        Pn=0
-        print('Cor:',cor.nome)
-        for pico in cor.Picos:
-            Pn+=1
-            print('Inicio:',pico.inicio,'fim:',pico.fim,'largura:',pico.largura,'pto_alto:',pico.pto_alto)
-        cor.Pico_Mais_Alto = Pico_Mais_Alto
         cor.histograma = histograma
         cor.mediana = mediana
-    return Cores
+        #Filtro passa baixa butterworth
+        cor.histograma_Filtrado = butter_lowpass_filter(histograma,2,50, order=10)
+        #Encontra indices dos picos filtrados
+        indices = peakutils.indexes(cor.histograma_Filtrado, thres=0.02/max(cor.histograma_Filtrado), min_dist=0.1)
+        cor.picos = []
+        #Filtra picos significativos
+        for indice in indices:
+            if(cor.histograma_Filtrado[indice]>5*media_Top):
+                cor.picos.append(indice)
+    #remove cores sem picos nas cores represntativas
+    Top_filtrado = []
+    for cor in top:
+        if (len(cor.picos)>0):
+            Top_filtrado.append(cor)
+            print(cor.nome,'\t\tPicos:',cor.picos,'\tN:',len(cor.picos))
+
+
+    return top
 
 def butter_lowpass(cutoff, fs, order=5):
     nyq = 0.5 * fs

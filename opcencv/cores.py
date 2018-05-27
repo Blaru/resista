@@ -6,7 +6,8 @@ Preto.add_filtro([15, 51, 0],[30, 102, 90])
 #________________________________________________
 Marrom = Cor(1,"Marrom",'brown')
 #Marrom.add_filtro([5, 56, 17],[16, 178, 102])  #Marrom 4
-Marrom.add_filtro([5, 56, 17],[16, 178, 91])  #Marrom 4.2
+Marrom.add_filtro([10, 150, 20],[14, 255, 64])  #Marrom 6
+#Marrom.add_filtro([5, 56, 17],[16, 178, 91])  #Marrom 4.2
 Marrom.add_filtro([0, 117, 53],[12, 229, 115])  #Marrom 5
 Marrom.add_filtro([177, 117, 53],[180, 229, 115])  #Marrom 5
 Marrom.add_filtro([8, 61, 120],[12, 130, 170])  #Marrom 6
