@@ -2,8 +2,9 @@ import cv2
 from operator import attrgetter
 import numpy as np
 import peakutils
+import math
 from scipy.signal import butter, lfilter, find_peaks_cwt
-from Cor import Pico
+from Cor import Pico,Faixa
 
 def Analisa_Mascaras(Cores):
     for cor in Cores:
@@ -39,12 +40,16 @@ def Analisa_Mascaras(Cores):
         cor.picos=[]
         #Filtra picos significativos
         for indice in indices:
-            if(cor.histograma_Filtrado[indice]>3*media_Top):
+            if(cor.histograma_Filtrado[indice]>2.5*media_Top):
                 cor.picos.append(indice)
                 if(cor.histograma_Filtrado[indice]>maior_pico):
                     maior_pico=cor.histograma_Filtrado[indice]
     maior_indice=0
     menor_indice=9999999999
+
+    #print('Entrada')
+    #Imprime_Picos(top)
+
     #Remove picos menores que 20% do maior pico
     for cor in top:
         picos = cor.picos
@@ -63,12 +68,11 @@ def Analisa_Mascaras(Cores):
     tolerancia = 0.15*delta
     #if (tolerancia<5):
     #   tolerancia=5
-    print('\n(Menor,Maior,Delta,tolerancia)',(menor_indice,maior_indice,delta,tolerancia))
+    #print('\n(Menor,Maior,Delta,tolerancia)',(menor_indice,maior_indice,delta,tolerancia))
 
-    #print('Entrada')
-    #Imprime_Picos(top)
     #remove picos repetidos e deixa o mair pico
     Top_filtrado = []
+    Faixas =[]
     for cor in top:
         Maiores_Picos =[]
         for pico in cor.picos:
@@ -85,17 +89,26 @@ def Analisa_Mascaras(Cores):
                             append = False
             if(append):
                 Maiores_Picos.append(pico)
+                Faixas.append(Faixa(cor.nome,cor.histograma_Filtrado[pico],pico))
         if(len(Maiores_Picos)>0):
             cor.picos = Maiores_Picos
             Top_filtrado.append(cor)
     top = Top_filtrado
-    print('Saida')
-    Imprime_Picos(top)
-
+    #print('\nSaida:')
+    Faixas.sort(key=attrgetter('indice'),reverse=False)
+    Imprime_Faixas(Faixas)
+    valor = Pega_Valor(Faixas)
     return top
+
+def Pega_Valor(Faixas):
+    o=0
+
 def Imprime_Picos(Cores):
     for cor in Cores:
-        print('\n',cor.nome,'\t\tPicos:',cor.picos,'\tN:',len(cor.picos))
+        print('\n',cor.nome,'\t\tPicos:',cor.picos)#,'\tN:',len(cor.picos))
+def Imprime_Faixas(Faixas):
+    for faixa in Faixas:
+        print('\n',faixa.cor,'\t\tIndice:',faixa.indice,'\tH:',faixa.valor)
 
 def butter_lowpass(cutoff, fs, order=5):
     nyq = 0.5 * fs

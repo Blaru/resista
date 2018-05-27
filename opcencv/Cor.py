@@ -1,5 +1,11 @@
 import numpy as np
 #Definindo classes de cores dos resistores
+class Faixa(object):
+    def __init__(self,cor,valor,indice):
+        self.cor = cor
+        self.valor = valor
+        self.indice = indice
+
 class Pico(object):
     def __init__(self,inicio,fim,pto_alto):
         self.inicio = inicio

@@ -7,8 +7,7 @@ imgs.append("R1.2") #BOM
 #"""
 imgs.append("R270")     #Melhor
 imgs.append('R12K')
-
-#imgs.append('R10K')
+imgs.append('R10K')
 #"""
 """
 imgs.append('330K')
@@ -19,7 +18,7 @@ imgs.append('180K')
 
 index=1
 for img in imgs:
-    print('\n',img,'\n')
+    print('\n\n',img)
     # Decodifica imagem de base64 e le em formato cv2
     rgb = get_Image(img)
 
