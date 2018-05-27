@@ -19,6 +19,8 @@ def Analisa_Mascaras(Cores):
     for cor in top:
         media_Top+= cor.media
     media_Top = media_Top/6
+    maior_pico = 0
+    Top_com_Picos=[]
     for cor in top:
         histograma = []
         mediana = []
@@ -34,20 +36,66 @@ def Analisa_Mascaras(Cores):
         cor.histograma_Filtrado = butter_lowpass_filter(histograma,2,50, order=10)
         #Encontra indices dos picos filtrados
         indices = peakutils.indexes(cor.histograma_Filtrado, thres=0.02/max(cor.histograma_Filtrado), min_dist=0.1)
-        cor.picos = []
+        cor.picos=[]
         #Filtra picos significativos
         for indice in indices:
-            if(cor.histograma_Filtrado[indice]>5*media_Top):
+            if(cor.histograma_Filtrado[indice]>3*media_Top):
                 cor.picos.append(indice)
-    #remove cores sem picos nas cores represntativas
+                if(cor.histograma_Filtrado[indice]>maior_pico):
+                    maior_pico=cor.histograma_Filtrado[indice]
+    maior_indice=0
+    menor_indice=9999999999
+    #Remove picos menores que 20% do maior pico
+    for cor in top:
+        picos = cor.picos
+        cor.picos = []
+        for indice in picos:
+            if(cor.histograma_Filtrado[indice]>0.2*maior_pico):
+                cor.picos.append(indice)
+                if(indice>maior_indice):
+                    maior_indice = indice
+                if(indice<menor_indice):
+                    menor_indice = indice
+        if(len(cor.picos)>0):
+            Top_com_Picos.append(cor)
+    top = Top_com_Picos
+    delta = maior_indice-menor_indice
+    tolerancia = 0.15*delta
+    #if (tolerancia<5):
+    #   tolerancia=5
+    print('\n(Menor,Maior,Delta,tolerancia)',(menor_indice,maior_indice,delta,tolerancia))
+
+    #print('Entrada')
+    #Imprime_Picos(top)
+    #remove picos repetidos e deixa o mair pico
     Top_filtrado = []
     for cor in top:
-        if (len(cor.picos)>0):
+        Maiores_Picos =[]
+        for pico in cor.picos:
+            append = True
+            for cor2 in top:
+                #print('\n',cor.nome,'\tX\t',cor2.nome)
+                if(cor != cor2):
+                    for pico2 in cor2.picos:
+                        delta = pico-pico2
+                        if(delta<0):
+                            delta = delta*(-1)
+                        #print('(delta,tolerancia,(p1,Vp1),(p2,Vp2))',(delta,tolerancia,(pico,cor.histograma_Filtrado[pico]),(pico2,cor2.histograma_Filtrado[pico2])))
+                        if(delta<=tolerancia and cor.histograma_Filtrado[pico]<cor2.histograma_Filtrado[pico2]):
+                            append = False
+            if(append):
+                Maiores_Picos.append(pico)
+        if(len(Maiores_Picos)>0):
+            cor.picos = Maiores_Picos
             Top_filtrado.append(cor)
-            print(cor.nome,'\t\tPicos:',cor.picos,'\tN:',len(cor.picos))
-
+    top = Top_filtrado
+    print('Saida')
+    Imprime_Picos(top)
 
     return top
+def Imprime_Picos(Cores):
+    for cor in Cores:
+        print('\n',cor.nome,'\t\tPicos:',cor.picos,'\tN:',len(cor.picos))
 
 def butter_lowpass(cutoff, fs, order=5):
     nyq = 0.5 * fs
