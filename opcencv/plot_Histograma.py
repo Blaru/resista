@@ -5,10 +5,9 @@ def plot_Histograma(plt,h,w,Cores,Filtrado=False):
     for cor in Cores:
         if Filtrado:
             plt.plot(cor.histograma_Filtrado,color=cor.color)
+            plt.axis([-1, len(cor.histograma_Filtrado)+1,0,h])
         else:
             plt.plot(cor.histograma,color=cor.color)
-        plt.plot(cor.mediana,color=cor.color)
-    plt.xlabel('pixels[px]')
-    plt.ylabel('densidade[px]')
-    plt.axis([-1, w/2+1,0,h])
+            plt.plot(cor.mediana,color=cor.color)
+            plt.axis([-1, len(cor.histograma)+1,0,h])
     plt.grid(True)

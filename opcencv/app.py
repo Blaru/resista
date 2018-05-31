@@ -1,13 +1,14 @@
 import matplotlib.pyplot as plt
 from Lib import Filtra_Contorno, get_Image, crop_imagem, Blur,Aplica_Filtros,Plota
-from processa import Analisa_Mascaras
+from processa import Pega_Histogramas,Filtra_Histogramas,Filtra_Faixas
 imgs = []
 # Define imagens
 imgs.append("R1.2") #BOM
 #"""
-imgs.append("R270")     #Melhor
+#imgs.append("R270")     #Melhor
 imgs.append('R12K')
-imgs.append('R10K')
+#"""
+#imgs.append('R10K')
 #"""
 """
 imgs.append('330K')
@@ -33,9 +34,12 @@ for img in imgs:
 
     Cores = Aplica_Filtros(frame)
 
-    Cores  = Analisa_Mascaras(Cores)
+    Histogramas  = Pega_Histogramas(Cores)
+    paleta  = Filtra_Histogramas(Histogramas)
 
-    index = Plota(img,imgs,index,rgb,edges,crop_mask,frame,Cores)
+    Faixas,valor = Filtra_Faixas(paleta)
+
+    index = Plota(img,imgs,index,rgb,edges,crop_mask,frame,Histogramas,paleta.Cores,valor)
 
 plt.subplots_adjust(left=0.05, bottom=0.05, right=0.98, top=0.98,
                 wspace=0.3, hspace=0.3)

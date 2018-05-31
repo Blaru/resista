@@ -80,7 +80,7 @@ def Aplica_Filtros(frame):
         filtrado  = cv2.bitwise_and(frame,frame, mask= Mask)
     return Cores
 
-def Plota(img,imgs,index,rgb,edges,crop_mask,frame,Cores):
+def Plota(img,imgs,index,rgb,edges,crop_mask,frame,Histogramas,Hist_Filtrados,valor):
     size = len(imgs)
     #print('size:',size,',5,index:',index)
 
@@ -90,12 +90,12 @@ def Plota(img,imgs,index,rgb,edges,crop_mask,frame,Cores):
     plt.subplot(size,3,index+1)
     plt.title('Histograma')
     h,w = crop_mask.shape
-    plot_Histograma(plt,h,w,Cores)
+    plot_Histograma(plt,h,w,Histogramas)
 
     plt.subplot(size,3,index+2)
-    plt.title('Filtrado')
+    plt.title(('Filtrado=',valor))
     h,w = crop_mask.shape
-    plot_Histograma(plt,h,w,Cores,Filtrado=True)
+    plot_Histograma(plt,h,w,Hist_Filtrados,Filtrado=True)
 
     index+=3
     return index

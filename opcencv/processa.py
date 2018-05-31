@@ -2,106 +2,129 @@ import cv2
 from operator import attrgetter
 import numpy as np
 import peakutils
-import math
 from scipy.signal import butter, lfilter, find_peaks_cwt
-from Cor import Pico,Faixa
+from Cor import Pico,Faixa,Paleta
 
-def Analisa_Mascaras(Cores):
+def  Pega_Histogramas(Cores):
     for cor in Cores:
-        h,w = cor.Mask.shape
-        cor.media =  cv2.countNonZero(cor.Mask)/w
-    Cores.sort(key=attrgetter('media'),reverse=True)# Ordena cores por percentual na foto
-    media_top3 = (Cores[0].media+Cores[1].media+Cores[2].media)/3
-    top = []
-    for cor in Cores:
-        if(cor.media>=media_top3*0.3):
-            top.append(cor)
-    media_Top = 0 # Media de pixels das cores que mais significantes
-    for cor in top:
-        media_Top+= cor.media
-    media_Top = media_Top/6
-    maior_pico = 0
-    Top_com_Picos=[]
-    for cor in top:
         histograma = []
         mediana = []
         h,w = cor.Mask.shape
         k = w%2 # =0 se par e 1 se impar
         for x in range(0,w-k,2):
             valor = cv2.countNonZero(cor.Mask[0:h,x:x+1])
+            cor.media =  cv2.countNonZero(cor.Mask)/w
             histograma.append(valor)
             mediana.append(cor.media)
         cor.histograma = histograma
         cor.mediana = mediana
-        #Filtro passa baixa butterworth
-        cor.histograma_Filtrado = butter_lowpass_filter(histograma,2,50, order=10)
-        #Encontra indices dos picos filtrados
-        indices = peakutils.indexes(cor.histograma_Filtrado, thres=0.02/max(cor.histograma_Filtrado), min_dist=0.1)
-        cor.picos=[]
+
+    return Cores
+
+def Filtra_Histogramas(Cores):
+    paleta = Paleta()
+    paleta.maior_pico = 0
+    for cor in Cores:
+        cor.histograma_Filtrado = butter_lowpass_filter(cor.histograma,2,50, order=10)
+        if(max(cor.histograma_Filtrado)>paleta.maior_pico):
+            paleta.maior_pico = max(cor.histograma_Filtrado)
+    print('Maior pico da foto:',paleta.maior_pico)
+    paleta.Cores = []
+    for cor in Cores:
+        if(max(cor.histograma_Filtrado)>paleta.maior_pico*0.25):
+            cor.picos = peakutils.indexes(cor.histograma_Filtrado, thres=0.02/max(cor.histograma_Filtrado), min_dist=0.1)
+            #print('Cor:\t',cor.nome,'picos:',cor.picos)
+            paleta.Cores.append(cor)
+    return paleta
+
+def Media_Top(paleta):
+    paleta.media_Top = 0 # Media de pixels das cores que mais significantes
+    for cor in paleta.Cores:
+        paleta.media_Top+= cor.media
+    paleta.media_Top = paleta.media_Top/len(paleta.Cores)
+
+def Pico_Utils(paleta):
+    #   maior_pico  =>   maior_pico
+    #   Ma_I        =>   maior_indice
+    #   Me_I        =>   menor_indice
+    #   delta       =>   DeltaX entre Primeiro e Ultimo Pico
+    #   tolerancia  =>   0.15*DeltaX
+    paleta.maior_pico
+    paleta.Ma_I=0
+    paleta.Me_I=9999999999
+    for cor in paleta.Cores:
         #Filtra picos significativos
-        for indice in indices:
-            if(cor.histograma_Filtrado[indice]>2.5*media_Top):
-                cor.picos.append(indice)
-                if(cor.histograma_Filtrado[indice]>maior_pico):
-                    maior_pico=cor.histograma_Filtrado[indice]
-    maior_indice=0
-    menor_indice=9999999999
+        for indice in cor.picos:
+            if(indice>paleta.Ma_I):
+                paleta.Ma_I = indice
+            if(indice<paleta.Me_I):
+                paleta.Me_I = indice
+    paleta.delta = paleta.Ma_I-paleta.Me_I
+    paleta.tolerancia = 0.13*paleta.delta
 
-    #print('Entrada')
-    #Imprime_Picos(top)
-
-    #Remove picos menores que 20% do maior pico
-    for cor in top:
+def Filtra_Picos(paleta):
+    for cor in paleta.Cores:
         picos = cor.picos
         cor.picos = []
         for indice in picos:
-            if(cor.histograma_Filtrado[indice]>0.2*maior_pico):
+            #print(cor.nome,'\nPico,0.2*MP\n',(cor.histograma_Filtrado[indice],0.1*paleta.maior_pico))
+            acima_da_media_reduzida = cor.histograma_Filtrado[indice]>0.3*paleta.media_Top
+            Maior_que_30percent_MP = cor.histograma_Filtrado[indice]>0.25*paleta.maior_pico
+            #print('\nacima_da_media_reduzida:\t',acima_da_media_reduzida)
+            #print('\Maior_que_30percent_MP:\t',Maior_que_30percent_MP)
+            if(Maior_que_30percent_MP and acima_da_media_reduzida):
                 cor.picos.append(indice)
-                if(indice>maior_indice):
-                    maior_indice = indice
-                if(indice<menor_indice):
-                    menor_indice = indice
-        if(len(cor.picos)>0):
-            Top_com_Picos.append(cor)
-    top = Top_com_Picos
-    delta = maior_indice-menor_indice
-    tolerancia = 0.15*delta
-    #if (tolerancia<5):
-    #   tolerancia=5
-    #print('\n(Menor,Maior,Delta,tolerancia)',(menor_indice,maior_indice,delta,tolerancia))
 
-    #remove picos repetidos e deixa o mair pico
-    Top_filtrado = []
+def Remove_Picos_coincidentes(paleta):
     Faixas =[]
-    for cor in top:
-        Maiores_Picos =[]
+    for cor in paleta.Cores:
+        Maiores_Picos =[]  #Variavel que filtra picos que sejam menores que outros de outras cores
         for pico in cor.picos:
-            append = True
-            for cor2 in top:
-                #print('\n',cor.nome,'\tX\t',cor2.nome)
-                if(cor != cor2):
+            append = True   #Assume que esse pico é o maior dessa faixa
+            for cor2 in paleta.Cores:
+                if(cor != cor2): #Não compara picos da cor com ela mesma
                     for pico2 in cor2.picos:
-                        delta = pico-pico2
+                        #Compara o pico com todos os picos dessa cor
+                        delta = pico-pico2 #Verifica
                         if(delta<0):
                             delta = delta*(-1)
                         #print('(delta,tolerancia,(p1,Vp1),(p2,Vp2))',(delta,tolerancia,(pico,cor.histograma_Filtrado[pico]),(pico2,cor2.histograma_Filtrado[pico2])))
-                        if(delta<=tolerancia and cor.histograma_Filtrado[pico]<cor2.histograma_Filtrado[pico2]):
+                        if(delta<=paleta.tolerancia and cor.histograma_Filtrado[pico]<cor2.histograma_Filtrado[pico2]):
+                            #Encontramos um pico dentro da tolerancia que é maior que o pico em análise
                             append = False
             if(append):
                 Maiores_Picos.append(pico)
                 Faixas.append(Faixa(cor.nome,cor.histograma_Filtrado[pico],pico))
         if(len(Maiores_Picos)>0):
             cor.picos = Maiores_Picos
-            Top_filtrado.append(cor)
-    top = Top_filtrado
-    #print('\nSaida:')
+    return Faixas
+
+def Filtra_Faixas(paleta):
+    #Array com as cores que tem representatividade na foto, media > 10% da media das 3 maiores
+
+    #Encontra a média do percentual de pixels das cores
+    Media_Top(paleta)
+
+    #Remove picos menores que 30% do maior pico e <25% da media
+    Filtra_Picos(paleta)
+
+    Pico_Utils(paleta)
+
+    print('\n(Menor,Maior,Delta,tolerancia)',(paleta.Me_I,paleta.Ma_I,paleta.delta,paleta.tolerancia))
+
+    #remove picos repetidos e deixa o mair pico
+    Faixas = Remove_Picos_coincidentes(paleta)
+
     Faixas.sort(key=attrgetter('indice'),reverse=False)
     Imprime_Faixas(Faixas)
+
     valor = Pega_Valor(Faixas)
-    return top
+
+    return [Faixas,valor]
+    #"""
 
 def Pega_Valor(Faixas):
-    o=0
+    return 220
 
 def Imprime_Picos(Cores):
     for cor in Cores:

@@ -29,3 +29,6 @@ class Cor(object):
         self.mask_percent=0
     def add_filtro(self,lower,upper):
         self.Filtros.append(Filtro(lower,upper))
+class Paleta(object):
+    def __init__(self):
+        self.Cores = []
