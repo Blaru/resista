@@ -84,18 +84,21 @@ def Plota(img,imgs,index,rgb,edges,crop_mask,frame,Histogramas,Hist_Filtrados,va
     size = len(imgs)
     #print('size:',size,',5,index:',index)
 
-    plt.subplot(size,3,index),plt.imshow(frame,cmap = 'gray')
+    plt.subplot(size,4,index),plt.imshow(rgb,cmap = 'gray')
     plt.title(img), plt.xticks([]), plt.yticks([])
 
-    plt.subplot(size,3,index+1)
+    plt.subplot(size,4,index+1),plt.imshow(frame,cmap = 'gray')
+    plt.title(img), plt.xticks([]), plt.yticks([])
+
+    plt.subplot(size,4,index+2)
     plt.title('Histograma')
     h,w = crop_mask.shape
     plot_Histograma(plt,h,w,Histogramas)
 
-    plt.subplot(size,3,index+2)
+    plt.subplot(size,4,index+3)
     plt.title(('Filtrado=',valor))
     h,w = crop_mask.shape
     plot_Histograma(plt,h,w,Hist_Filtrados,Filtrado=True)
 
-    index+=3
+    index+=4
     return index

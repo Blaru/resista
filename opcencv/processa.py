@@ -2,6 +2,9 @@ import cv2
 from operator import attrgetter
 import numpy as np
 import peakutils
+import math
+from si_prefix import si_format
+
 from scipy.signal import butter, lfilter, find_peaks_cwt
 from Cor import Pico,Faixa,Paleta
 
@@ -31,10 +34,13 @@ def Filtra_Histogramas(Cores):
     print('Maior pico da foto:',paleta.maior_pico)
     paleta.Cores = []
     for cor in Cores:
-        if(max(cor.histograma_Filtrado)>paleta.maior_pico*0.25):
+        if(max(cor.histograma_Filtrado)>paleta.maior_pico*0.248):
             cor.picos = peakutils.indexes(cor.histograma_Filtrado, thres=0.02/max(cor.histograma_Filtrado), min_dist=0.1)
             #print('Cor:\t',cor.nome,'picos:',cor.picos)
             paleta.Cores.append(cor)
+            #print(cor.nome,'__Mantida,max,limite',max(cor.histograma_Filtrado),paleta.maior_pico*0.248)
+        #else:
+            #print(cor.nome,'__Descartada,max,limite',max(cor.histograma_Filtrado),paleta.maior_pico*0.248)
     return paleta
 
 def Media_Top(paleta):
@@ -60,7 +66,7 @@ def Pico_Utils(paleta):
             if(indice<paleta.Me_I):
                 paleta.Me_I = indice
     paleta.delta = paleta.Ma_I-paleta.Me_I
-    paleta.tolerancia = 0.13*paleta.delta
+    paleta.tolerancia = 0.15*paleta.delta
 
 def Filtra_Picos(paleta):
     for cor in paleta.Cores:
@@ -94,7 +100,7 @@ def Remove_Picos_coincidentes(paleta):
                             append = False
             if(append):
                 Maiores_Picos.append(pico)
-                Faixas.append(Faixa(cor.nome,cor.histograma_Filtrado[pico],pico))
+                Faixas.append(Faixa(cor.nome,cor.valor,pico))
         if(len(Maiores_Picos)>0):
             cor.picos = Maiores_Picos
     return Faixas
@@ -110,7 +116,7 @@ def Filtra_Faixas(paleta):
 
     Pico_Utils(paleta)
 
-    print('\n(Menor,Maior,Delta,tolerancia)',(paleta.Me_I,paleta.Ma_I,paleta.delta,paleta.tolerancia))
+    #print('\n(Menor,Maior,Delta,tolerancia)',(paleta.Me_I,paleta.Ma_I,paleta.delta,paleta.tolerancia))
 
     #remove picos repetidos e deixa o mair pico
     Faixas = Remove_Picos_coincidentes(paleta)
@@ -124,7 +130,22 @@ def Filtra_Faixas(paleta):
     #"""
 
 def Pega_Valor(Faixas):
-    return 220
+    DIM = len(Faixas)
+    #print('DIM___',len(Faixas))
+    if(DIM<3 or DIM>6):
+        print('Invalido__ Faixas:',len(Faixas))
+        return 'Tente Novamente'
+    else:
+        if(DIM == 3):
+            print('Caso 3,(0,1,2)=',(Faixas[0].valor,Faixas[1].valor,Faixas[2].valor))
+            return str(si_format(int(float(str(Faixas[0].valor)+str(Faixas[1].valor)+'E'+str(Faixas[2].valor)))))
+        elif(DIM == 4):
+            return str(si_format(int(float(str(Faixas[0].valor)+str(Faixas[1].valor)+str(Faixas[2].valor)+'E'+str(Faixas[3].valor)))))
+        elif(DIM == 5):
+            return str(si_format(int(float(str(Faixas[0].valor)+str(Faixas[1].valor)+str(Faixas[2].valor)+str(Faixas[3].valor)+'E'+str(Faixas[4].valor)))))
+        elif(DIM == 6):
+            return str(si_format(int(float(str(Faixas[0].valor)+str(Faixas[1].valor)+str(Faixas[2].valor)+str(Faixas[3].valor)+str(Faixas[4].valor)+'E'+str(Faixas[5].valor)))))
+    return 'Erro em conversão de Faixas'
 
 def Imprime_Picos(Cores):
     for cor in Cores:

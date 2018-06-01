@@ -2,6 +2,7 @@ from Cor import Cor
 #________________________________________________
 Preto = Cor(0,"Preto",'black')
 Preto.add_filtro([15, 51, 0],[30, 102, 90])
+#Preto.add_filtro([4, 0, 0],[40, 80, 70])
 
 #________________________________________________
 Marrom = Cor(1,"Marrom",'brown')
@@ -53,6 +54,14 @@ Branco	=	Cor(9,"Branco",'lavender')
 Branco.add_filtro([0, 0, 90],[180, 15, 140])
 
 #________________________________________________
+Dourado	=	Cor(10,"Dourado",'gold')
+Dourado.add_filtro([59, 109, 168],[70, 130, 186])
+Dourado.add_filtro([70, 99, 219],[74, 104, 222])
+Dourado.add_filtro([63, 89, 191],[67, 97, 200])
+Dourado.add_filtro([66, 127, 209],[88, 135, 224])
+#Dourado.add_filtro([19, 125, 91],[25, 250, 120])
+
+#________________________________________________
 Cores=[]
 Cores.append(Preto)
 Cores.append(Marrom)
@@ -64,3 +73,4 @@ Cores.append(Azul)
 Cores.append(Roxo)
 Cores.append(Cinza)
 #Cores.append(Branco)
+Cores.append(Dourado)

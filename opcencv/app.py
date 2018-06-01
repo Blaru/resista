@@ -3,14 +3,14 @@ from Lib import Filtra_Contorno, get_Image, crop_imagem, Blur,Aplica_Filtros,Plo
 from processa import Pega_Histogramas,Filtra_Histogramas,Filtra_Faixas
 imgs = []
 # Define imagens
-imgs.append("R1.2") #BOM
 #"""
-#imgs.append("R270")     #Melhor
+imgs.append("R1.2") #BOM
+imgs.append("R270")     #Melhor
 imgs.append('R12K')
 #"""
-#imgs.append('R10K')
+imgs.append('R10K')
 #"""
-"""
+#"""
 imgs.append('330K')
 imgs.append('120K')
 imgs.append('150K')
