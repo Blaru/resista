@@ -20,15 +20,15 @@ def  Pega_Histogramas(Cores):
             histograma.append(valor)
             mediana.append(cor.media)
         cor.histograma = histograma
+        cor.Todas_Cores_Filtradas = butter_lowpass_filter(cor.histograma,2,50, order=10)
         cor.mediana = mediana
-
     return Cores
 
 def Filtra_Histogramas(Cores):
     paleta = Paleta()
     paleta.maior_pico = 0
     for cor in Cores:
-        cor.histograma_Filtrado = butter_lowpass_filter(cor.histograma,2,50, order=10)
+        cor.histograma_Filtrado = cor.Todas_Cores_Filtradas
         if(max(cor.histograma_Filtrado)>paleta.maior_pico):
             paleta.maior_pico = max(cor.histograma_Filtrado)
     print('Maior pico da foto:',paleta.maior_pico)

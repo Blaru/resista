@@ -80,25 +80,35 @@ def Aplica_Filtros(frame):
         filtrado  = cv2.bitwise_and(frame,frame, mask= Mask)
     return Cores
 
-def Plota(img,imgs,index,rgb,edges,crop_mask,frame,Histogramas,Hist_Filtrados,valor):
-    size = len(imgs)
-    #print('size:',size,',5,index:',index)
+def Plota_Histogramas(img,frame,Histogramas,paleta,valor,index,rows):
 
-    plt.subplot(size,4,index),plt.imshow(rgb,cmap = 'gray')
+    plt.subplot(rows,4,index),plt.imshow(frame,cmap = 'gray')
     plt.title(img), plt.xticks([]), plt.yticks([])
 
-    plt.subplot(size,4,index+1),plt.imshow(frame,cmap = 'gray')
-    plt.title(img), plt.xticks([]), plt.yticks([])
+    plt.subplot(rows,4,index+1),plt.title('Histograma')
+    h,w,s = frame.shape
+    plot_Histograma(h,Histogramas)
 
-    plt.subplot(size,4,index+2)
-    plt.title('Histograma')
-    h,w = crop_mask.shape
-    plot_Histograma(plt,h,w,Histogramas)
+    plt.subplot(rows,4,index+2),plt.title('Filtro_Butterworth')
+    plot_Histograma(h,Histogramas,Todos_Filtrados=True)
 
-    plt.subplot(size,4,index+3)
-    plt.title(('Filtrado=',valor))
-    h,w = crop_mask.shape
-    plot_Histograma(plt,h,w,Hist_Filtrados,Filtrado=True)
+    plt.subplot(rows,4,index+3),plt.title((valor))
+    plot_Histograma(h,paleta.Cores,Filtrado=True)
 
     index+=4
     return index
+def Plota_Corte(img,rgb,edges,crop_mask,frame,index,rows):
+
+    plt.subplot(rows,4,index),plt.imshow(rgb,cmap = 'gray')
+    plt.title(img), plt.xticks([]), plt.yticks([])
+
+    plt.subplot(rows,4,index+1),plt.imshow(edges,cmap = 'gray')
+    plt.title('edges'), plt.xticks([]), plt.yticks([])
+
+    plt.subplot(rows,4,index+2),plt.imshow(crop_mask,cmap = 'gray')
+    plt.title('crop_mask'), plt.xticks([]), plt.yticks([])
+
+    plt.subplot(rows,4,index+3),plt.imshow(frame,cmap = 'gray')
+    plt.title('frame'), plt.xticks([]), plt.yticks([])
+
+    return index+4
