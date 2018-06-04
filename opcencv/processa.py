@@ -31,7 +31,7 @@ def Filtra_Histogramas(Cores):
         cor.histograma_Filtrado = cor.Todas_Cores_Filtradas
         if(max(cor.histograma_Filtrado)>paleta.maior_pico):
             paleta.maior_pico = max(cor.histograma_Filtrado)
-    print('Maior pico da foto:',paleta.maior_pico)
+    #print('Maior pico da foto:',paleta.maior_pico)
     paleta.Cores = []
     for cor in Cores:
         if(max(cor.histograma_Filtrado)>paleta.maior_pico*0.248):
@@ -122,7 +122,7 @@ def Filtra_Faixas(paleta):
     Faixas = Remove_Picos_coincidentes(paleta)
 
     Faixas.sort(key=attrgetter('indice'),reverse=False)
-    Imprime_Faixas(Faixas)
+    #Imprime_Faixas(Faixas)
 
     valor = Pega_Valor(Faixas)
 
@@ -133,11 +133,11 @@ def Pega_Valor(Faixas):
     DIM = len(Faixas)
     #print('DIM___',len(Faixas))
     if(DIM<3 or DIM>6):
-        print('Invalido__ Faixas:',len(Faixas))
+        #print('Invalido__ Faixas:',len(Faixas))
         return 'Tente Novamente'
     else:
         if(DIM == 3):
-            print('Caso 3,(0,1,2)=',(Faixas[0].valor,Faixas[1].valor,Faixas[2].valor))
+            #print('Caso 3,(0,1,2)=',(Faixas[0].valor,Faixas[1].valor,Faixas[2].valor))
             return str(si_format(int(float(str(Faixas[0].valor)+str(Faixas[1].valor)+'E'+str(Faixas[2].valor)))))
         elif(DIM == 4):
             return str(si_format(int(float(str(Faixas[0].valor)+str(Faixas[1].valor)+str(Faixas[2].valor)+'E'+str(Faixas[3].valor)))))

@@ -25,6 +25,9 @@ data = json.load(open('data.json'))
 def get_Image(nome):
     return imread(io.BytesIO(base64.b64decode(data[nome]["data"])))
 
+def get_Image_From_B64(img):
+    return imread(io.BytesIO(base64.b64decode(img)))
+
 def Filtra_Contorno(rgb):
     h,w,s = rgb.shape
     # Aplica escala de cinza na imagem
