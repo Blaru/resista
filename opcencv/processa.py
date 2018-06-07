@@ -122,7 +122,7 @@ def Filtra_Faixas(paleta):
     Faixas = Remove_Picos_coincidentes(paleta)
 
     Faixas.sort(key=attrgetter('indice'),reverse=False)
-    #Imprime_Faixas(Faixas)
+    Imprime_Faixas(Faixas)
 
     valor = Pega_Valor(Faixas)
 
