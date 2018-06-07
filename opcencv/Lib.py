@@ -11,7 +11,7 @@ import base64
 from scipy import signal
 from scipy.signal import butter, lfilter
 #################
-#Bibliotecas próprias
+#Bibliotecas proprias
 from processa import butter_lowpass_filter
 from cores import Cores
 from Cor import Pico

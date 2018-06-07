@@ -86,9 +86,9 @@ def Remove_Picos_coincidentes(paleta):
     for cor in paleta.Cores:
         Maiores_Picos =[]  #Variavel que filtra picos que sejam menores que outros de outras cores
         for pico in cor.picos:
-            append = True   #Assume que esse pico é o maior dessa faixa
+            append = True   #Assume que esse pico e o maior dessa faixa
             for cor2 in paleta.Cores:
-                if(cor != cor2): #Não compara picos da cor com ela mesma
+                if(cor != cor2): #Nao compara picos da cor com ela mesma
                     for pico2 in cor2.picos:
                         #Compara o pico com todos os picos dessa cor
                         delta = pico-pico2 #Verifica
@@ -96,7 +96,7 @@ def Remove_Picos_coincidentes(paleta):
                             delta = delta*(-1)
                         #print('(delta,tolerancia,(p1,Vp1),(p2,Vp2))',(delta,tolerancia,(pico,cor.histograma_Filtrado[pico]),(pico2,cor2.histograma_Filtrado[pico2])))
                         if(delta<=paleta.tolerancia and cor.histograma_Filtrado[pico]<cor2.histograma_Filtrado[pico2]):
-                            #Encontramos um pico dentro da tolerancia que é maior que o pico em análise
+                            #Encontramos um pico dentro da tolerancia que e maior que o pico em análise
                             append = False
             if(append):
                 Maiores_Picos.append(pico)
@@ -108,7 +108,7 @@ def Remove_Picos_coincidentes(paleta):
 def Filtra_Faixas(paleta):
     #Array com as cores que tem representatividade na foto, media > 10% da media das 3 maiores
 
-    #Encontra a média do percentual de pixels das cores
+    #Encontra a media do percentual de pixels das cores
     Media_Top(paleta)
 
     #Remove picos menores que 30% do maior pico e <25% da media

@@ -1,8 +1,6 @@
 import matplotlib.pyplot as plt
 
 def plot_Histograma(h,Cores,Filtrado=False,Todos_Filtrados=False,):
-    # create some data to use for the plot
-
     for cor in Cores:
         if(Todos_Filtrados):
             plt.plot(cor.Todas_Cores_Filtradas,color=cor.color)

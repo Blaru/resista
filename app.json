@@ -27,66 +27,64 @@
           }
         }
       },
-      "templates": {
-        "body": {
-          "header": {
-            "title": "RESISTA!!",
-            "style": {
-              "color": "white",
-              "background": "#4286f4"
-            },
-            "actions": {
-              "$load": {
-                "type": "$media.camera",
-                "options": {
-                  "edit": "true",
-                  "type": "photo"
-                },
-                "success": {
-                  "type": "$render"
-                }
+      "body": {
+        "header": {
+          "title": "RESISTA!!",
+          "style": {
+            "color": "white",
+            "background": "#4286f4"
+          },
+          "actions": {
+            "$load": {
+              "type": "$media.camera",
+              "options": {
+                "edit": "true",
+                "type": "photo"
+              },
+              "success": {
+                "type": "$render"
               }
             }
-          },
-          "sections": [
-            {
-              "items": [
-                {
-                  "type": "label",
-                  "text": "{{$jason.resposta}}",
-                  "style": {
-                    "color": "white"
-                  }
+          }
+        },
+        "sections": [
+          {
+            "items": [
+              {
+                "type": "label",
+                "text": "{{$jason.resposta}}",
+                "style": {
+                  "color": "white"
                 }
-              ]
-            }
-          ],
-          "background": {
-            "type": "camera",
-            "options": {
-              "device": "back"
-            }
-          },
-          "footer": {
-            "tabs": {
-              "style": {
-                "background": "rgba(255,255,255,0.8)",
-                "color:disabled": "#cecece",
-                "color": "#009efa"
-              },
-              "items": [
-                {
-                  "image": "http://pelagaggi.pe.hu/app_folder/enviar.png",
-                  "text": "Enviar",
-                  "style": {
-                    "height": "21"
-                  },
-                  "action": {
-                    "trigger": "Enviar_foto"
-                  }
+              }
+            ]
+          }
+        ],
+        "background": {
+          "type": "camera",
+          "options": {
+            "device": "back"
+          }
+        },
+        "footer": {
+          "tabs": {
+            "style": {
+              "background": "rgba(255,255,255,0.8)",
+              "color:disabled": "#cecece",
+              "color": "#009efa"
+            },
+            "items": [
+              {
+                "image": "http://pelagaggi.pe.hu/app_folder/enviar.png",
+                "text": "Enviar",
+                "style": {
+                  "height": "21"
+                },
+                "action": {
+                  "trigger": "Enviar_foto"
                 }
-              ]
-            }
+              }
+            ]
           }
         }
       }
